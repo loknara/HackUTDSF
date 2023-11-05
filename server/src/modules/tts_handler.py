@@ -30,18 +30,18 @@ class TTSHandler:
         condition = threading.Condition()
 
         def tts_thread_fn():
-            # audio_stream = generate(
-            #     text=cls._sync_stream(speak_queue, condition),
-            #     voice="Bella",
-            #     model="eleven_monolingual_v1",
-            #     stream=True
-            # )
-            # stream(audio_stream)
+            audio_stream = generate(
+                text=cls._sync_stream(speak_queue, condition),
+                voice="Bella",
+                model="eleven_monolingual_v1",
+                stream=True
+            )
+            stream(audio_stream)
 
-            # for chunk in audio_stream:
-            #     with condition:
-            #         audio_queue.append(chunk)
-            #         condition.notify()
+            for chunk in audio_stream:
+                with condition:
+                    audio_queue.append(chunk)
+                    condition.notify()
 
             with condition:
                 audio_queue.append(None)
