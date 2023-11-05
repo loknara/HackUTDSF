@@ -16,10 +16,10 @@ import {
 import Conversation from "./Conversation";
 
 const InfoForm = ({navigation}) => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [dateOfBirth, setDateOfBirth] = useState('');
-    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('Lokesh');
+    const [lastName, setLastName] = useState('Nara');
+    const [dateOfBirth, setDateOfBirth] = useState('2003-01-13');
+    const [email, setEmail] = useState('lokeshnarasani@gmail.com');
   
     // Helper function to validate email
     const validateEmail = (email) => {
