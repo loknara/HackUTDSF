@@ -4,8 +4,8 @@ import base64
 from typing import AsyncGenerator, Any, Dict
 
 from src.modules.persistence import Persistence
-from server.src.modules.onboard_chatbot import OnboardChatbot
-from server.src.modules.claims_chatbot import ClaimsChatbot
+from src.modules.onboard_chatbot import OnboardChatbot
+from src.modules.claims_chatbot import ClaimsChatbot
 from src.modules.tts_handler import TTSHandler
 
 
@@ -34,7 +34,7 @@ class SessionHandler:
 
     @classmethod
     async def get_claim_chatbot_response(cls, user_id: str, query: str, done_event: asyncio.Event = asyncio.Event()) -> AsyncGenerator[Any, Any]:
-        chatbot = cls.current_chatbot[user_id]
+        chatbot = cls.current_chatbot
         done_event.clear()
         max_question_count = 4
 
@@ -49,18 +49,17 @@ class SessionHandler:
             ""
         ]
 
-        async for answer in chatbot.chat_completion(f"{query}. {questions[cls.question_count]}"):
-            async for result in TTSHandler.generate_audio_async(chatbot.chat_completion(f"{answer}."), done_event=done_event):
-                if 'text' in result:
-                    print(result)
-                    yield json.dumps({"type": "text", "text": result['text']})
-                if 'partial-text' in result:
-                    yield json.dumps({"type": "partial-text", "text": result['partial-text']})
-                elif 'chunk' in result:
-                    yield json.dumps({
-                        'type': 'chunk',
-                        'chunk': base64.b64encode(result['chunk']).decode('utf-8')
-                    })
+        async for result in TTSHandler.generate_audio_async(chatbot.chat_completion(f"{query}. Instruction: {questions[cls.question_count]}"), done_event=done_event):
+            if 'text' in result:
+                print(result)
+                yield json.dumps({"type": "text", "text": result['text']})
+            if 'partial-text' in result:
+                yield json.dumps({"type": "partial-text", "text": result['partial-text']})
+            elif 'chunk' in result:
+                yield json.dumps({
+                    'type': 'chunk',
+                    'chunk': base64.b64encode(result['chunk']).decode('utf-8')
+                })
 
         yield json.dumps({'type': 'status', "status": "success"})
         yield json.dumps({'type': 'ending', "status": "success"})
@@ -69,7 +68,7 @@ class SessionHandler:
 
     @classmethod
     async def get_onboard_chatbot_response(cls, user_id: str, query: str, done_event: asyncio.Event = asyncio.Event()) -> AsyncGenerator[Any, Any]:
-        chatbot = cls.current_chatbot[user_id]
+        chatbot = cls.current_chatbot
         done_event.clear()
         max_question_count = 5
 
@@ -84,22 +83,22 @@ class SessionHandler:
             "Ask me if I have a business vehicle.",
             "Ask me if I have any employees.",
             "Ask me if I operate my business in a building",
-            "Say my policy number is 12312. Choose two or three of the following policies based on my business needs and list them out and add a quick explanation on why I'm getting them. Policies: Business Owners Policy: Combines business property and liability insurance. Commercial Auto: Covers business-owned vehicles. Contractors Policy: Tailored insurance for contractors. Liability Umbrella: Additional liability coverage. Workers Compensation: Covers medical expenses and some lost wages for work-related injuries/illness. Surety & Fidelity Bonds: Protects financial interests. Equipment Policies: Commercial Auto Insurance: Covers vehicles for jobsite travel. Inland Marine Insurance: Covers transportable business property. Employee Policies: Workers' Compensation: Protection against work-related injuries/illness. Group Life Insurance: Life benefit for employee groups. Liability Policies: Professional Liability Insurance: Coverage against lawsuits for errors. Employment Practices Liability Insurance: Coverage for employment-related issues. Life Policies: Key Employee Insurance: Life insurance for key employees. Small Business Life Insurance: Covers unexpected loss of key employees or partners. Retirement Policies: Individual 401(k): Retirement plan for owner-only businesses. Small Business Retirement Plans: Helps plan for retirement and provides tax deductions for contributions to employee retirement funds.",
+            "Tell me my policy number is 12312",
+            "Then Choose two or three of the following policies based on my business needs and list them out and add a quick explanation on why I'm getting them. Policies: Business Owners Policy: Combines business property and liability insurance. Commercial Auto: Covers business-owned vehicles. Contractors Policy: Tailored insurance for contractors. Liability Umbrella: Additional liability coverage. Workers Compensation: Covers medical expenses and some lost wages for work-related injuries/illness. Surety & Fidelity Bonds: Protects financial interests. Equipment Policies: Commercial Auto Insurance: Covers vehicles for jobsite travel. Inland Marine Insurance: Covers transportable business property. Employee Policies: Workers' Compensation: Protection against work-related injuries/illness. Group Life Insurance: Life benefit for employee groups. Liability Policies: Professional Liability Insurance: Coverage against lawsuits for errors. Employment Practices Liability Insurance: Coverage for employment-related issues. Life Policies: Key Employee Insurance: Life insurance for key employees. Small Business Life Insurance: Covers unexpected loss of key employees or partners. Retirement Policies: Individual 401(k): Retirement plan for owner-only businesses. Small Business Retirement Plans: Helps plan for retirement and provides tax deductions for contributions to employee retirement funds. Finally i want you to give me a proce and be firm on the price. Dont price each policy individually but as a summed total at the end based on every 6 months. Choose between a number from 2500 to 5000. Also only tell me the policy name and not the extra info.",
             ""
         ]
 
-        async for answer in chatbot.chat_completion(f"{query}. {questions[cls.question_count]}"):
-            async for result in TTSHandler.generate_audio_async(chatbot.chat_completion(f"{answer}."), done_event=done_event):
-                if 'text' in result:
-                    print(result)
-                    yield json.dumps({"type": "text", "text": result['text']})
-                if 'partial-text' in result:
-                    yield json.dumps({"type": "partial-text", "text": result['partial-text']})
-                elif 'chunk' in result:
-                    yield json.dumps({
-                        'type': 'chunk',
-                        'chunk': base64.b64encode(result['chunk']).decode('utf-8')
-                    })
+        async for result in TTSHandler.generate_audio_async(chatbot.chat_completion(f"{query}. Instruction: {questions[cls.question_count]}"), done_event=done_event):
+            if 'text' in result:
+                print(result)
+                yield json.dumps({"type": "text", "text": result['text']})
+            if 'partial-text' in result:
+                yield json.dumps({"type": "partial-text", "text": result['partial-text']})
+            elif 'chunk' in result:
+                yield json.dumps({
+                    'type': 'chunk',
+                    'chunk': base64.b64encode(result['chunk']).decode('utf-8')
+                })
 
         yield json.dumps({'type': 'status', "status": "success"})
         yield json.dumps({'type': 'ending', "status": "success"})
@@ -107,7 +106,7 @@ class SessionHandler:
         await done_event.wait()
 
     @classmethod
-    async def send_message(cls, message: str) -> None:
+    async def send_message(cls, user_id: str, message: str) -> None:
         done_event = asyncio.Event()
         if cls.stage == "Onboarding":
             async for result in cls.get_onboard_chatbot_response(message, done_event):
@@ -141,7 +140,7 @@ class SessionHandler:
         done_event = asyncio.Event()
 
         user_info = f"Name: {user_details['first_name']} {user_details['last_name']}, Age: {user_details['age']}, City: {user_details['city']}, Phone: {user_details['phone']}"
-        chatbot.add_system_message(f"Patient info: {user_info}")
+        chatbot.add_system_message(f"Insured info: {user_info}")
 
         async for result in cls.get_onboard_chatbot_response(
             user_id,

@@ -79,7 +79,7 @@ async def chatbot(sid, data: Dict[str, Any]):
             await sio.emit("chatbot", result, room=sid)
     elif command == "get_response":
         query: str = data.get("query")
-        async for result in SessionHandler.get_chatbot_response(user_id=user_id, query=query):
+        async for result in SessionHandler.send_message(user_id, query):
             await sio.emit("chatbot", result, room=sid)
     elif command == "speech_from_text":
         text: str = data.get("text")
