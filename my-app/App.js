@@ -122,9 +122,11 @@ const Home = ({navigation}) => {
                 fontSize: 32, // You can adjust the size as needed
                 fontWeight: 'bold', // Optional: if you want the text to be bold
                 color: 'black', // Adjust the color as needed
+                marginBottom: 75,
+                paddingLeft: 50
               }}
             >
-              Welcome!
+              ClaimGaurdian
             </Text>
 </Animated.View>
 
@@ -208,6 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     justifyContent: "flex-end",
+    marginTop: 25
   },
   backgroundImageContainer: {
     width: "100%",
