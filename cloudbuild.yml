@@ -1,0 +1,36 @@
+ steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'tag-and-push'
+    script: |
+      #!/bin/sh
+      set -e
+      docker build -t $_IMAGE .
+      docker push "$_IMAGE"
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'generate-token-and-get-digest'
+    script: |
+      #!/bin/sh
+      set -e
+      gcloud auth print-identity-token --audiences=sigstore > token
+      gcloud container images describe "$_IMAGE" \
+        --format="value(image_summary.fully_qualified_digest)" > image_with_digest
+  - name: 'gcr.io/projectsigstore/cosign'
+    id: 'sign-image'
+    script: |
+      #!/busybox/sh
+      cosign sign --identity-token=$(cat token) $(cat image_with_digest) -y
+    env:
+    - 'SIGSTORE_NO_CACHE=true'
+  service_account: '$_SERVICE_ACCOUNT'
+  artifacts:
+    images:
+    - $_IMAGE
+  substitutions:
+    _IMAGE: 'LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE_NAME'
+    _SERVICE_ACCOUNT_ID: 'SERVICE_ACCOUNT_ID'
+    _SERVICE_ACCOUNT: projects/${PROJECT_ID}/serviceAccounts/${_SERVICE_ACCOUNT_ID}
+  options:
+    env:
+    - '_IMAGE=$_IMAGE'
+    dynamic_substitutions: true
+    logging: CLOUD_LOGGING_ONLY
