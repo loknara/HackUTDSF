@@ -1,8 +1,9 @@
 .vscode/
 
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
+.next/
 
 /android/app/build
 /ios/build
