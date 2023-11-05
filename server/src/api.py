@@ -1,3 +1,5 @@
+import json
+
 from typing import Dict, Any, Optional, List
 
 from fastapi import FastAPI, Query, UploadFile, File
@@ -20,7 +22,7 @@ UPLOAD_DIRECTORY = Path(__file__).parent / "uploads"
 UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 # Set up CORS
-origins = ["*"]
+origins = ["*", "http://localhost:8080",]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -43,19 +45,19 @@ async def test():
     return ResponseModel(success=True, message={"test": "passed"})
 
 
-@app.get(f"{API_V1_ENDPOINT}/users/get_all_data")
+@app.get(f"{API_V1_ENDPOINT}/get_claims")
 async def get_all():
     return ResponseModel(
         success=True,
-        message={"user_data": Persistence.get_all_users()}
+        message={"claim_data": json.dumps(Persistence.get_all_claims())}
     )
 
 
-@app.get(f"{API_V1_ENDPOINT}/users/get_user")
+@app.post(f"{API_V1_ENDPOINT}/create_user")
 async def get_user(user_id: str = Query()):
     return ResponseModel(
         success=True,
-        message={"user_data": Persistence.get_user(user_id=user_id)}
+        message={"user_data": Persistence.create_user(user_id)}
     )
 
 
@@ -121,27 +123,6 @@ async def upload_audio(file: UploadFile = File(...)):
         message={"transcription": transcription}
     )
 
-# remove this once modal endpoint works.
-
-
-@app.post("/upload_video/")
-async def upload_video(file: UploadFile = File(...)):
-    # Ensure the upload directory exists
-    UPLOAD_DIRECTORY = Path(__file__).parent / "uploads"
-    UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
-
-    # Save the uploaded file
-    temp_path = UPLOAD_DIRECTORY / file.filename
-    with temp_path.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    # Clean up (Optional: remove temporary files)
-    Path(temp_path).unlink()
-
-    return ResponseModel(
-        success=True,
-        message={}
-    )
-
+Persistence.initialize()
 if __name__ == "__main__":
     Persistence.initialize()
