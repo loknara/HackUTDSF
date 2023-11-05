@@ -18,6 +18,7 @@ import Conversation from "./Conversation";
 const InfoForm = ({navigation}) => {
     const [firstName, setFirstName] = useState('Lokesh');
     const [lastName, setLastName] = useState('Nara');
+    const [buisnessName, setBuisnessName] = useState('Lokesh Car Care');
     const [dateOfBirth, setDateOfBirth] = useState('2003-01-13');
     const [email, setEmail] = useState('lokeshnarasani@gmail.com');
   
@@ -80,6 +81,14 @@ const InfoForm = ({navigation}) => {
               placeholder="Enter your last name"
             />
 
+            <Text style={styles.label}>Business Name:</Text>
+            <TextInput
+              style={styles.input}
+              value={buisnessName}
+              onChangeText={setBuisnessName}
+              placeholder="Enter your Business name"
+            />
+
             <Text style={styles.label}>Date of Birth:</Text>
             <TextInput
               style={styles.input}
@@ -138,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   baseButton: {
-    backgroundColor: '#FF6347',
+    backgroundColor: '#f01716',
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 25,

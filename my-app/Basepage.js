@@ -8,6 +8,7 @@ import config from "./tamagui.config";
 import { Button, XStack, Image } from "tamagui";
 import Fileclaim from "./Fileclaim";
 import Policy from "./Policy";
+import Quote from "./Quote";
 
 
 
@@ -137,7 +138,7 @@ const BasePage = ({navigation}) => {
                 fontSize={21}
                 backgroundColor={"white"}
                 color={"$red9"}
-                // onPress={() => startCheckInAnimations()}
+                onPress={() => navigation.navigate('Quote')}
               >
                 See current Quote
               </Button>

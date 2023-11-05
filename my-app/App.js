@@ -14,6 +14,8 @@ import Basepage from "./Basepage";
 import Infoask from "./Infoask";
 import Fileclaim from "./Fileclaim";
 import Policy from "./Policy";
+import Quote from "./Quote";
+import Acceptpolicy from "./Acceptpolicy";
 
 
 
@@ -194,7 +196,8 @@ export default function App() {
         <Stack.Screen name="Infoask" component={Infoask} options={{headerShown: false}}/>
         <Stack.Screen name="Fileclaim" component={Fileclaim} options={{headerShown: false}}/>
         <Stack.Screen name="Policy" component={Policy} options={{headerShown: false}}/>
-
+        <Stack.Screen name="Quote" component={Quote} options={{headerShown: false}}/>
+        <Stack.Screen name="Acceptpolicy" component={Acceptpolicy} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

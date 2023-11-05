@@ -34,6 +34,7 @@ const Conversation = ({navigation}) => {
 
     const [textTypeCount, setTextTypeCount] = useState(0);
     const [showButton, setShowButton] = useState(false);
+    const [showMic, setShowMic] = useState(true);
 
     const [microphoneScale] = useState(new Animated.Value(1));
 
@@ -119,8 +120,12 @@ const Conversation = ({navigation}) => {
                     const newCount = prevCount + 1;
                     console.log("this is prevcount" + prevCount)
                     if (newCount === 5) {
+                        setShowMic(false);
+                    }
+                    if (newCount === 5) {
                         setShowButton(true);
                     }
+
                     return newCount;
                 });
             }
@@ -270,14 +275,15 @@ const Conversation = ({navigation}) => {
         <TamaguiProvider config={config}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <Text style={styles.headerText}>{textResponse}</Text>
-    
+   
                 <View style={styles.textAreaContainer}>
+              
                     <TextArea
                         value={userSpokenText}
                         style={styles.textArea}
                     />
                 </View>
-    
+                {showMic && (
                 <Animated.View
                     style={[
                         styles.microphoneContainer,
@@ -295,15 +301,16 @@ const Conversation = ({navigation}) => {
                         />
                     </TouchableOpacity>
                 </Animated.View>
+                )}
                 {/* <Text style={styles.pText}>{curAudio}</Text> */}
                 
                 <View style={styles.baseButtonContainer}>
                     {showButton && (
                     <TouchableOpacity
                         style={styles.baseButton}
-                        onPress={() => navigation.navigate('Basepage')}
+                        onPress={() => navigation.navigate('Acceptpolicy')}
                     >
-                        <Text style={styles.buttonText}>Go to Dashboard</Text>
+                        <Text style={styles.buttonText}>Go to Policy View</Text>
                     </TouchableOpacity>
                     )}
                 </View>
@@ -381,7 +388,7 @@ const Conversation = ({navigation}) => {
         //     marginBottom: 20,
         // },
         baseButton: {
-            backgroundColor: '#FF6347',
+            backgroundColor: '#f01716',
             paddingHorizontal: 30,
             paddingVertical: 12,
             borderRadius: 25,

@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View, ImageBackground, Animated, Text, TouchableOpacity } from "react-native";
 import { TamaguiProvider, TextArea } from "tamagui";
@@ -34,6 +35,8 @@ const Fileclaim = ({navigation}) => {
 
     const [textTypeCount, setTextTypeCount] = useState(0);
     const [showButton, setShowButton] = useState(false);
+    const [showMic, setShowMic] = useState(true);
+    const [image, setImage] = useState(null);
 
     const [microphoneScale] = useState(new Animated.Value(1));
 
@@ -53,6 +56,23 @@ const Fileclaim = ({navigation}) => {
             ])
         ).start();
     };
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
+        console.log(result);
+    
+        if (!result.cancelled) {
+          setImage(result.uri);
+          // You can also upload the image to your server here
+        }
+      };
 
     const stopRecordingAnim = () => {
         microphoneScale.stopAnimation();
@@ -114,6 +134,9 @@ const Fileclaim = ({navigation}) => {
                     console.log("this is prevcount before" + prevCount)
                     const newCount = prevCount + 1;
                     console.log("this is prevcount" + prevCount)
+                    if (newCount === 3) {
+                        setShowMic(false);
+                    }
                     if (newCount === 3) {
                         setShowButton(true);
                     }
@@ -271,7 +294,17 @@ const Fileclaim = ({navigation}) => {
                         style={styles.textArea}
                     />
                 </View>
+
+           
+                <View style={styles.uploadButtonContainer}>
+            <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+              <Text style={styles.uploadButtonText}>Upload Image</Text>
+            </TouchableOpacity>
+            {image && <Image source={{ uri: image }} style={styles.uploadedImage} />}
+          </View>
+        
     
+          {showMic && (
                 <Animated.View
                     style={[
                         styles.microphoneContainer,
@@ -289,6 +322,7 @@ const Fileclaim = ({navigation}) => {
                         />
                     </TouchableOpacity>
                 </Animated.View>
+                )}
                 {/* <Text style={styles.pText}>{curAudio}</Text> */}
                 
                 <View style={styles.baseButtonContainer}>
@@ -309,6 +343,28 @@ const Fileclaim = ({navigation}) => {
                     }
     export default Fileclaim;
     const styles = StyleSheet.create({
+        uploadButtonContainer: {
+            alignItems: 'center',
+            marginVertical: 20,
+          },
+          uploadButton: {
+            backgroundColor: '#f01716', // Your specified button color
+            paddingHorizontal: 30,
+            paddingVertical: 12,
+            borderRadius: 5,
+            elevation: 2,
+          },
+          uploadButtonText: {
+            color: 'white',
+            fontSize: 16,
+            fontWeight: 'bold',
+          },
+          uploadedImage: {
+            width: 200,
+            height: 200,
+            marginTop: 20,
+            borderRadius: 5, // Optional: if you want rounded corners for the image
+          },
         container: {
             flex: 1,
             backgroundColor: '#f0f0f0', // Soft background color for the entire view
@@ -375,7 +431,7 @@ const Fileclaim = ({navigation}) => {
         //     marginBottom: 20,
         // },
         baseButton: {
-            backgroundColor: '#FF6347',
+            backgroundColor: '#f01716',
             paddingHorizontal: 30,
             paddingVertical: 12,
             borderRadius: 25,
@@ -388,5 +444,14 @@ const Fileclaim = ({navigation}) => {
                 fontSize: 18,
                 fontWeight: 'bold',
             },
+            imageUploadContainer: {
+                alignItems: 'center',
+                marginVertical: 20,
+              },
+              uploadedImage: {
+                width: 200,
+                height: 200,
+                marginTop: 20,
+              },
         });
     

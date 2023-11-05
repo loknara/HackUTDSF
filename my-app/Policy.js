@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 const policies = [
   { id: 1, name: 'Business Owners Policy', details: 'Combines business property and liability insurance.' },
   { id: 2, name: 'Commercial Auto', details: 'Covers business-owned vehicles.' },
-  { id: 3, name: 'Liability Umbrella', details: 'Additional liability coverage.' },
+  {  id: 3, name: 'Workers Compensation', details: 'Covers medical expenses and some lost wages for work-related injuries/illness' },
   // ...other policies
 ];
 
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: '#f5f5f5',
+    marginTop: 60
   },
   title: {
     fontSize: 22,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   backButtonText: {
-    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold'
   },
 });
