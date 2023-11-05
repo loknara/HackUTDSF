@@ -3,9 +3,9 @@ import json
 import base64
 from typing import AsyncGenerator, Any, Dict
 
-from v1.src.modules.persistence import Persistence
-from v1.src.modules.chatbot import Chatbot
-from v1.src.modules.tts_handler import TTSHandler
+from src.modules.persistence import Persistence
+from src.modules.chatbot import Chatbot
+from src.modules.tts_handler import TTSHandler
 
 
 class SessionHandler:
