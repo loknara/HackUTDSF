@@ -27,10 +27,10 @@ class Persistence:
     def initialize(cls) -> None:
         cls.create_user()
         cls.insert_claim({
-            "id": "3AM4D",
+            "id": "NBD37",
             "model": "Manual",
-            "description": "Workers Comp",
-            "date": "2023-11-04",
+            "description": "Car Accident",
+            "date": "2023-11-05",
             "amount": 1000,
             "status": "Closed",
             "summary": "Lokesh got into an accident on his way to work. He has the drivers policy, so he should be covered.",
