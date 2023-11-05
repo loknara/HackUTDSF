@@ -77,7 +77,12 @@ async def chatbot(sid, data: Dict[str, Any]):
     command: str = data.get("command")
 
     if command == "create_session":
+        print("Creating session")
         async for result in SessionHandler.create_session(user_id=user_id):
+            await sio.emit("chatbot", result, room=sid)
+    elif command == "create_claim":
+        print("Create claim")
+        async for result in SessionHandler.create_claim(user_id=user_id):
             await sio.emit("chatbot", result, room=sid)
     elif command == "get_response":
         query: str = data.get("query")

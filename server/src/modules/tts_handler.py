@@ -10,6 +10,7 @@ set_api_key(os.getenv("ELEVENLABS_API_KEY"))
 
 WORDS_PER_CHUNK = 3
 
+
 class TTSHandler:
     @classmethod
     def _sync_stream(cls, speak_queue: list, condition: threading.Condition) -> str:
@@ -29,21 +30,21 @@ class TTSHandler:
         condition = threading.Condition()
 
         def tts_thread_fn():
-            audio_stream = generate(
-                text=cls._sync_stream(speak_queue, condition),
-                voice="Bella",
-                model="eleven_monolingual_v1",
-                stream=True
-            )
-            stream(audio_stream)
+            # audio_stream = generate(
+            #     text=cls._sync_stream(speak_queue, condition),
+            #     voice="Bella",
+            #     model="eleven_monolingual_v1",
+            #     stream=True
+            # )
+            # stream(audio_stream)
 
-            for chunk in audio_stream:
-                with condition:
-                    audio_queue.append(chunk)
-                    condition.notify()
-                
+            # for chunk in audio_stream:
+            #     with condition:
+            #         audio_queue.append(chunk)
+            #         condition.notify()
+
             with condition:
-                audio_queue.append(None) 
+                audio_queue.append(None)
                 condition.notify()
 
         threading.Thread(target=tts_thread_fn).start()
@@ -55,7 +56,8 @@ class TTSHandler:
             yield {'type': 'partial-text', "text": full_text}
             full_text += text
             while re.search(r'[.!?]', sentence_buffer):
-                sentence, _, remainder = re.split(r'([.!?])', sentence_buffer, 1)
+                sentence, _, remainder = re.split(
+                    r'([.!?])', sentence_buffer, 1)
                 sentence += _
                 with condition:
                     speak_queue.append(sentence.strip())
@@ -70,11 +72,11 @@ class TTSHandler:
         with condition:
             speak_queue.append(None)  # Signal end of text
             condition.notify()
-        
+
         yield {'type': 'text', 'text': full_text}
         while True:  # Yield audio chunks
             with condition:
-                while not audio_queue: # wait until there's an item
+                while not audio_queue:  # wait until there's an item
                     condition.wait()
                 audio_chunk = audio_queue.pop(0)
             if audio_chunk is None:  # Check for sentinel value
@@ -82,4 +84,3 @@ class TTSHandler:
                     done_event.set()
                 break
             yield {'type': 'chunk', 'chunk': audio_chunk}
-            

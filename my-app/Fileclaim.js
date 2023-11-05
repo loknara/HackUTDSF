@@ -86,6 +86,12 @@ const Fileclaim = ({navigation}) => {
             transports: ["websocket"],
             path: "/ws/socket.io",
         });
+        setSocket(socketIo);
+
+        socketIo.emit('chatbot', {
+            "user_id": "john_doe",
+            "command": "create_claim"
+        });
         
         socketIo.on('chatbot', (result) => {
             let parsedResult = JSON.parse(result);
@@ -108,8 +114,7 @@ const Fileclaim = ({navigation}) => {
                     console.log("this is prevcount before" + prevCount)
                     const newCount = prevCount + 1;
                     console.log("this is prevcount" + prevCount)
-                    if (newCount ===3) {
-                        // Show the button when the count reaches 3
+                    if (newCount === 3) {
                         setShowButton(true);
                     }
                     return newCount;
@@ -205,6 +210,7 @@ const Fileclaim = ({navigation}) => {
                 console.log('Saved audio file to', savedUri);
             }
         } else {
+            setUserSpokenText("");
             await startRecording();
         }
     }
@@ -279,7 +285,7 @@ const Fileclaim = ({navigation}) => {
                         <Icon
                             name={recording ? 'circle' : 'microphone'}
                             size={150}
-                            color="black"
+                            color={recording ? 'red' : 'black'}
                         />
                     </TouchableOpacity>
                 </Animated.View>
@@ -301,7 +307,7 @@ const Fileclaim = ({navigation}) => {
         </TamaguiProvider>
     )
                     }
-        export default Fileclaim;
+    export default Fileclaim;
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -314,20 +320,23 @@ const Fileclaim = ({navigation}) => {
             alignItems: 'center',
         },
         headerText: {
-            fontSize: 22,
+            fontSize: 18,
             marginBottom: 20,
+            marginTop: 20,
+            minHeight: 340,
             fontWeight: '600',
             textAlign: 'center',
             color: '#333', // Dark text for better readability
         },
         textAreaContainer: {
             width: '100%',
+            height: "auto",
             alignItems: 'center',
             marginBottom: 30,
         },
         textArea: {
             width: '90%',
-            height: 150,
+            height: 100,
             borderWidth: 1,
             borderColor: "#ddd", // Soft border color
             borderRadius: 10,
@@ -375,9 +384,9 @@ const Fileclaim = ({navigation}) => {
             shadowRadius: 3,
         },
         buttonText: {
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 'bold',
-        },
-    });
+                color: 'white',
+                fontSize: 18,
+                fontWeight: 'bold',
+            },
+        });
     
