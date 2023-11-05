@@ -79,7 +79,7 @@ class SessionHandler:
                 "date": "2023-11-05",
                 "amount": 500,
                 "status": "Open",
-                "summary": "Lokesh's business vehicle broke down on the way to work. According to his policy, he has commercial auto which covers business-owned vehicles, so he is covered",
+                "summary": "Lokesh's business vehicle got into a minor wreck. According to his policy, he has commercial auto which covers business-owned vehicles, so he is covered",
                 "transcript": chat_messages,
             })
         await done_event.wait()
